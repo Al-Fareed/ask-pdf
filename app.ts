@@ -12,7 +12,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 
-app.use("/api", validatePDF, pdfroute, errorHandler);
+app.use("/files", validatePDF, pdfroute, errorHandler);
+app.use("/pdf", pdfroute);
 
 app.get("/", (req: Request, res: Response) => {
    return res.json({
