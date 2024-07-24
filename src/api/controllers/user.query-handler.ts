@@ -15,10 +15,10 @@ export const queryPDF = async (
       new OpenAIEmbeddings(),
       { pineconeIndex }
     );
-      const results = await vectorStore.similaritySearch(query, 1);
-      console.log(results);
+      const docs = await vectorStore.similaritySearch(query, 4);
+      const docsPageContent = docs.map((d) => d.pageContent).join(" ");
       return res.status(200).json({
-          data:results
+        data: docsPageContent,
       });
   } catch (error: any) {
     next(error);
