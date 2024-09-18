@@ -13,14 +13,14 @@ export const queryPDF = async (
   next: NextFunction
 ) => {
   try {
-    const { query } = req.body;
+    const { query, openAiModel, openaiApiKey } = req.body;
 
     const vectorStore = await PineconeStore.fromExistingIndex(
       new OpenAIEmbeddings(),
       { pineconeIndex }
     );
     const docs = await vectorStore.similaritySearch(query, 5);
-    if(!docs){
+    if (!docs) {
       throw new Error("It seems like no documents were found, Try uploading a pdf file")
     }
     const docsPageContent = docs.map((d) => d.pageContent).join(" ");
@@ -35,20 +35,17 @@ export const queryPDF = async (
         Your answers should be verbose and detailed."
     );
 
-    // const response = await promptTemplate.invoke({
-    //   userquery: query,
-    //   docs: docsPageContent,
-    // });
     const model = new ChatOpenAI({
-      model: process.env.MODEL,
-      apiKey: process.env.OPENAI_API_KEY!,
+      model: openAiModel || 'gpt-3.5-turbo',
+      apiKey: openaiApiKey!,
     });
     const structuredModel = model.withStructuredOutput(responseModel)
-    // const parser = new StringOutputParser();
 
     const chain = promptTemplate.pipe(structuredModel);
-     const response =  await chain.invoke({userquery: query,
-      docs: docsPageContent,})
+    const response = await chain.invoke({
+      userquery: query,
+      docs: docsPageContent,
+    })
     return res.status(200).json({
       data: response,
     });
