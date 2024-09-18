@@ -4,8 +4,9 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import responseModel from "../../model/outputModel";
-import pineconeIndex from "../../shared/db/config";
 import dotenv from "dotenv";
+import pineconeInstance from "../../shared/db/config";
+import { Index } from "@pinecone-database/pinecone";
 dotenv.config();
 export const queryPDF = async (
   req: Request,
@@ -13,11 +14,11 @@ export const queryPDF = async (
   next: NextFunction
 ) => {
   try {
-    const { query, openAiModel, openaiApiKey } = req.body;
-
+    const {openAiModel, openaiApiKey,pineconeIndex,query } = req.body;
+    const index:Index = pineconeInstance.Index(pineconeIndex)
     const vectorStore = await PineconeStore.fromExistingIndex(
       new OpenAIEmbeddings(),
-      { pineconeIndex }
+      { pineconeIndex:index }
     );
     const docs = await vectorStore.similaritySearch(query, 5);
     if (!docs) {
@@ -32,7 +33,7 @@ export const queryPDF = async (
         Based on the following provided documents: {docs} \
         If the documents doesnot have enough information or lacks in providing info \
         Respons ``` Not enough context ``` \
-        Your answers should be verbose and detailed."
+        Your answers should be verbose and very very detailed and must use simple english"
     );
 
     const model = new ChatOpenAI({

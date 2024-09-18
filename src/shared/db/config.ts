@@ -1,9 +1,8 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from "dotenv";
 dotenv.config();
-const pinecone = new Pinecone({
+const pineconeInstance = new Pinecone({
       apiKey: process.env.PINECONE_API_KEY!,
 })
-const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);    
 
-export default pineconeIndex;
+export default pineconeInstance;
