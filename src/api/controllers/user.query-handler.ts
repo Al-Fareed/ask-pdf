@@ -26,11 +26,11 @@ export const queryPDF = async (
     const docsPageContent = docs.map((d) => d.pageContent).join(" ");
 
     const promptTemplate = PromptTemplate.fromTemplate(
-      "You are a helpful assistant that that can answer questions on provided data \
+      "You are a helpful assistant that that can answer questions on provided documents \
         based on the documents that are provided. Be within the boundary of provide document\
         Answer the following question: {userquery} \
-        Based on the following provided transcript: {docs} \
-        If the transcipt doesnot have enough information or lacks in providing info \
+        Based on the following provided documents: {docs} \
+        If the documents doesnot have enough information or lacks in providing info \
         Respons ``` Not enough context ``` \
         Your answers should be verbose and detailed."
     );
