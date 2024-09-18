@@ -31,13 +31,14 @@ export const queryPDF = async (
         based on the documents that are provided. Be within the boundary of provide document\
         Answer the following question: {userquery} \
         Based on the following provided documents: {docs} \
+        '''IF THE DOCS DOESN'T CONTAIN ANY INFO ABOUT QUESTION i.e., {userquery}, THEN RESPOND THAT NOT ENOUGH DOCUMENTS''' \
         If the documents doesnot have enough information or lacks in providing info \
-        Respons ``` Not enough context ``` \
-        Your answers should be verbose and very very detailed and must use simple english"
+        '''Respond ``` Not enough context ```''' \
+        Your answers should be very very detailed and must use simple english"
     );
 
     const model = new ChatOpenAI({
-      model: openAiModel || 'gpt-3.5-turbo',
+      model: openAiModel || 'gpt-4o-mini',
       apiKey: openaiApiKey!,
     });
     const structuredModel = model.withStructuredOutput(responseModel)
