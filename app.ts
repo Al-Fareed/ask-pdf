@@ -3,7 +3,8 @@ import { start } from './src/shared/utils/server';
 import bodyParser from "body-parser";
 const cookieParser = require("cookie-parser");
 import cors from "cors";
-import pdfroute from './src/api/routes/pdf-routes'
+import pdfroute from './src/api/routes/pdf-routes';
+import fileroute from './src/api/routes/file-routes';
 import { validatePDF } from "./src/middlewares/check-pdf";
 import { errorHandler } from "./src/middlewares/error.handler";
 const app: Express = express();
@@ -12,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 
-app.use("/files", validatePDF, pdfroute, errorHandler);
+app.use("/files", validatePDF, fileroute, errorHandler);
 app.use("/pdf", pdfroute);
 
 app.get("/", (req: Request, res: Response) => {

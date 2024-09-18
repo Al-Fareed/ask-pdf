@@ -3,7 +3,6 @@ import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
-import { StringOutputParser } from "@langchain/core/output_parsers";
 import responseModel from "../../model/outputModel";
 import pineconeIndex from "../../shared/db/config";
 import dotenv from "dotenv";
@@ -20,16 +19,19 @@ export const queryPDF = async (
       new OpenAIEmbeddings(),
       { pineconeIndex }
     );
-    const docs = await vectorStore.similaritySearch(query, 4);
+    const docs = await vectorStore.similaritySearch(query, 5);
+    if(!docs){
+      throw new Error("It seems like no documents were found, Try uploading a pdf file")
+    }
     const docsPageContent = docs.map((d) => d.pageContent).join(" ");
 
     const promptTemplate = PromptTemplate.fromTemplate(
-      "You are a helpful assistant that that can answer questions about youtube videos \
-        based on the video's transcript.\
+      "You are a helpful assistant that that can answer questions on provided data \
+        based on the documents that are provided. Be within the boundary of provide document\
         Answer the following question: {userquery} \
-        By searching the following video transcript: {docs} \
-        Only use the factual information from the transcript to answer the question.\
-        If you feel like you don't have enough information to answer the question, say `I don't know`. \
+        Based on the following provided transcript: {docs} \
+        If the transcipt doesnot have enough information or lacks in providing info \
+        Respons ``` Not enough context ``` \
         Your answers should be verbose and detailed."
     );
 
@@ -38,7 +40,7 @@ export const queryPDF = async (
     //   docs: docsPageContent,
     // });
     const model = new ChatOpenAI({
-      model: "gpt-3.5-turbo",
+      model: process.env.MODEL,
       apiKey: process.env.OPENAI_API_KEY!,
     });
     const structuredModel = model.withStructuredOutput(responseModel)

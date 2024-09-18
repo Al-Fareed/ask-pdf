@@ -1,7 +1,7 @@
 import express, { Express } from "express";
 const router = express.Router();
-import { queryPDF } from '../controllers/user.query-handler'
+import { uploadPDF } from '../controllers/pdf-handler'
 
-router.post('/query',queryPDF)
+router.post('/pdf-upload',uploadPDF)
 
 export default router;
