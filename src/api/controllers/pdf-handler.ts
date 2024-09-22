@@ -9,7 +9,7 @@ dotenv.config();
 export const uploadPDF = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const file = req.file;
-    const indexName = file?.originalname.split('.')[0];
+    const indexName = file?.originalname.split('.')[0].toLowerCase();
 
     const docs = await extractPDF(file?.path!);
 
