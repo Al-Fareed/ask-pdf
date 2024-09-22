@@ -8,10 +8,10 @@ dotenv.config();
 
 export const uploadPDF = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { filepath } = req.body;
-    const indexName = filepath.split('/').pop().split('.')[0].toLowerCase();
+    const file = req.file;
+    const indexName = file?.originalname.split('.')[0];
 
-    const docs = await extractPDF(filepath);
+    const docs = await extractPDF(file?.path!);
 
     const pinecone = pineconeInstance
 
@@ -24,7 +24,7 @@ export const uploadPDF = async (req: Request, res: Response, next: NextFunction)
 
     if (!indexExists) {
       await pinecone.createIndex({
-        name: indexName,
+        name: indexName!,
         dimension: 1536,
         spec: {
           serverless: { cloud: "aws", region: "us-east-1" }
@@ -37,7 +37,7 @@ export const uploadPDF = async (req: Request, res: Response, next: NextFunction)
       })
     }
 
-    const pineconeIndex = pinecone.Index(indexName);
+    const pineconeIndex = pinecone.Index(indexName!);
 
     await PineconeStore.fromDocuments(
       docs,

@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-export function validatePDF(req: Request, res: Response, next: NextFunction) {
+export function fileHanlder(req: Request, res: Response, next: NextFunction) {
   try {
-    const {filepath} = req.body;
-    if (!filepath.endsWith(".pdf")) {
-      throw new Error("Please upload file with extension 'pdf'");
+    const file = req.file;
+    console.log("File uploaded is ",file);
+    
+    if (!file) {
+      throw new Error("Please upload file");
+    }else if(file.fieldname !== 'pdf'){
+      throw new Error("Upload a pdf file")
     }
     next();
   } catch (error: any) {
