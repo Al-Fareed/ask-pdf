@@ -17,7 +17,7 @@ export const queryPDF = async (
     const {openAiModel, openaiApiKey,pineconeIndex,query } = req.body;
     const index:Index = pineconeInstance.Index(pineconeIndex)
     const vectorStore = await PineconeStore.fromExistingIndex(
-      new OpenAIEmbeddings(),
+      new OpenAIEmbeddings({apiKey:openaiApiKey}),
       { pineconeIndex:index }
     );
     const docs = await vectorStore.similaritySearch(query, 5);
