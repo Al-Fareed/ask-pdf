@@ -9,6 +9,7 @@ dotenv.config();
 export const uploadPDF = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const file = req.file;
+    const { openaiApiKey, openaiModel } = req.body
     const indexName = file?.originalname.split('.')[0].toLowerCase();
 
     const docs = await extractPDF(file?.path!);
@@ -42,8 +43,8 @@ export const uploadPDF = async (req: Request, res: Response, next: NextFunction)
     await PineconeStore.fromDocuments(
       docs,
       new OpenAIEmbeddings({
-        apiKey: process.env.OPENAI_API_KEY!,
-        model: process.env.MODEL,
+        apiKey: openaiApiKey,
+        model: openaiModel,
       }),
       {
         pineconeIndex,
